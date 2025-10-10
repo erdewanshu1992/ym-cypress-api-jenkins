@@ -1,0 +1,21 @@
+{
+  "loginResponseSchema": {
+    "status_code": "number",
+    "status": "string",
+    "message": "string",
+    "object": "object",
+    "token": "object",
+    "object2": "object"
+  },
+  "otpVerificationResponseSchema": {
+    "status_code": "number",
+    "status": "string",
+    "message": "string",
+    "object": "object"
+  },
+  "userObjectSchema": {
+    "user_id": "number",
+    "email": "string",
+    "mobile": "number"
+  }
+}

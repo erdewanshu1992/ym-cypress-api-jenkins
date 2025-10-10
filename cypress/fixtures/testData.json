@@ -1,0 +1,25 @@
+{
+  "validUser": {
+    "mobile": 9855566677,
+    "otp": 2222
+  },
+  "invalidUser": {
+    "mobile": 1234567890,
+    "otp": 9999
+  },
+  "endpoints": {
+    "login": "/v3/userapi/login",
+    "otpVerification": "/v3/userapi/otp/verification"
+  },
+  "expectedResponses": {
+    "login": {
+      "status_code": 401,
+      "status": "success",
+      "message": "move on otp verification page"
+    },
+    "otpVerification": {
+      "status_code": 0,
+      "status": "success"
+    }
+  }
+}
