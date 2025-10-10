@@ -1,4 +1,5 @@
 import { defineConfig } from 'cypress';
+// Import with type assertion to avoid TypeScript issues
 import cypressOnRun from 'cypress-mochawesome-reporter/plugin';
 
 export default defineConfig({
@@ -10,25 +11,28 @@ export default defineConfig({
     screenshotsFolder: 'cypress/screenshots',
     videosFolder: 'cypress/videos',
 
-    // API testing specific settings
+    // API testing specific settings - optimized for CI
     video: false,
     screenshotOnRunFailure: true,
 
-    // Timeouts
-    defaultCommandTimeout: 10000,
-    requestTimeout: 15000,
-    responseTimeout: 15000,
+    // Timeouts - increased for CI environment
+    defaultCommandTimeout: process.env.CI ? 30000 : 10000,
+    requestTimeout: process.env.CI ? 45000 : 15000,
+    responseTimeout: process.env.CI ? 45000 : 15000,
+    pageLoadTimeout: process.env.CI ? 60000 : 30000,
 
-    // Retry configuration
+    // Retry configuration - more retries in CI
     retries: {
-      runMode: 2,
+      runMode: process.env.CI ? 3 : 2,
       openMode: 0,
     },
 
-    // Environment variables
+    // Environment variables - use environment-specific settings
     env: {
-      apiUrl: 'https://api-live.yesmadam.com',
+      apiUrl: process.env.CI ? 'https://api-live.yesmadam.com' : 'https://api-live.yesmadam.com',
       apiVersion: 'v3',
+      environment: process.env.CI ? 'ci' : 'local',
+      timeout: process.env.CI ? 45000 : 15000,
     },
 
     setupNodeEvents(on, config) {

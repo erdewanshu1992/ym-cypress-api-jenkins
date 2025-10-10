@@ -29,10 +29,25 @@ export const environments: Record<string, Environment> = {
     apiVersion: 'v3',
     timeout: 15000,
   },
+  ci: {
+    name: 'ci',
+    apiUrl: 'https://api-live.yesmadam.com',
+    apiVersion: 'v3',
+    timeout: 45000, // Longer timeout for CI environment
+  },
 };
 
 export class EnvironmentConfig {
-  private static currentEnv: string = Cypress.env('environment') || 'production';
+  private static _currentEnv: string = 'production';
+
+  private static get currentEnv(): string {
+    if (this._currentEnv === 'production') {
+      // Lazy initialization - only access Cypress when needed
+      this._currentEnv = Cypress.env('environment') ||
+        (process.env.CI ? 'ci' : 'production') || 'production';
+    }
+    return this._currentEnv;
+  }
 
   static getEnvironment(): Environment {
     return environments[this.currentEnv];

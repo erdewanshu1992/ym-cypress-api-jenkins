@@ -25,6 +25,7 @@ export default tseslint.config(
       ],
       'no-unused-expressions': 'off', // Disable for Chai assertions
       '@typescript-eslint/no-unused-expressions': 'off', // Disable TypeScript version for Chai assertions
+      '@typescript-eslint/no-require-imports': 'off', // Allow require for config files
     },
   }
 );
