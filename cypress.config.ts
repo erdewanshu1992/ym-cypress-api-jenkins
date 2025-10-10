@@ -1,6 +1,5 @@
 import { defineConfig } from 'cypress';
 // Import with type assertion to avoid TypeScript issues
-// @ts-expect-error - Plugin doesn't have TypeScript definitions
 import cypressOnRun from 'cypress-mochawesome-reporter/plugin.js';
 
 export default defineConfig({
