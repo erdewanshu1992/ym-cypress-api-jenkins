@@ -7,6 +7,17 @@ import { ApiHelper } from '../utils/apiHelper';
 import { ResponseValidator } from '../utils/responseValidator';
 import { Logger } from '../utils/logger';
 
+// Define proper TypeScript interfaces
+interface ApiRequestOptions {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  url: string;
+  body?: Record<string, unknown> | string | null;
+  headers?: Record<string, string>;
+  qs?: Record<string, string | number | boolean>;
+}
+
+// Extend Cypress Chainable interface using module augmentation
+/* eslint-disable @typescript-eslint/no-namespace */
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -14,46 +25,41 @@ declare global {
        * Custom command to make API requests with enhanced logging
        * @example cy.apiRequest({ method: 'POST', url: '/api/login', body: {...} })
        */
-      apiRequest(options: {
-        method?: string;
-        url: string;
-        body?: any;
-        headers?: Record<string, string>;
-        qs?: Record<string, any>;
-      }): Chainable<any>;
+      apiRequest(options: ApiRequestOptions): Cypress.Chainable<Cypress.Response<unknown>>;
 
       /**
        * Custom command to login and store auth token
        * @example cy.login(9855566677, 2222)
        */
-      login(mobile: number, otp: number): Chainable<any>;
+      login(mobile: number, otp: number): Cypress.Chainable<Cypress.Response<unknown>>;
 
       /**
        * Custom command to validate response status
        * @example cy.validateStatus(response, 200)
        */
-      validateStatus(response: any, expectedStatus: number): Chainable<any>;
+      validateStatus(response: Cypress.Response<unknown>, expectedStatus: number): Cypress.Chainable<Cypress.Response<unknown>>;
 
       /**
        * Custom command to validate response schema
        * @example cy.validateSchema(response.body, { status: 'string', data: 'object' })
        */
-      validateSchema(body: any, schema: Record<string, string>): Chainable<any>;
+      validateSchema(body: Record<string, unknown>, schema: Record<string, string>): Cypress.Chainable<Record<string, unknown>>;
 
       /**
        * Custom command to get auth token from environment
        * @example cy.getAuthToken()
        */
-      getAuthToken(): Chainable<string>;
+      getAuthToken(): Cypress.Chainable<string>;
 
       /**
        * Custom command to set auth token in environment
        * @example cy.setAuthToken('token123')
        */
-      setAuthToken(token: string): Chainable<void>;
+      setAuthToken(token: string): Cypress.Chainable<void>;
     }
   }
 }
+/* eslint-enable @typescript-eslint/no-namespace */
 
 // API Request Command
 Cypress.Commands.add('apiRequest', (options) => {
@@ -61,13 +67,26 @@ Cypress.Commands.add('apiRequest', (options) => {
 
   return ApiHelper.makeRequest({
     url: options.url,
-    method: (options.method as any) || 'GET',
+    method: options.method || 'GET',
     body: options.body,
     headers: options.headers,
     qs: options.qs,
-  }).then((response) => {
-    Logger.response(response.status, response.body, response.duration);
-    return cy.wrap(response);
+  }).then((apiResponse) => {
+    Logger.response(apiResponse.status, apiResponse.body, apiResponse.duration);
+
+    // Convert ApiResponse to Cypress.Response format
+    const cypressResponse: Cypress.Response<unknown> = {
+      status: apiResponse.status,
+      body: apiResponse.body,
+      headers: apiResponse.headers,
+      duration: apiResponse.duration,
+      statusText: 'OK',
+      isOkStatusCode: apiResponse.status >= 200 && apiResponse.status < 300,
+      requestHeaders: {},
+      allRequestResponses: []
+    };
+
+    return cy.wrap(cypressResponse);
   });
 });
 
@@ -92,7 +111,8 @@ Cypress.Commands.add('login', (mobile: number, otp: number) => {
         })
         .then((otpResponse) => {
           expect(otpResponse.status).to.equal(200);
-          const token = otpResponse.body.message;
+          const responseBody = otpResponse.body as { message: string };
+          const token = responseBody.message;
           cy.setAuthToken(token);
           Logger.success('Login successful');
           return cy.wrap(otpResponse);
@@ -114,7 +134,7 @@ Cypress.Commands.add('validateSchema', (body, schema) => {
 
 // Get Auth Token Command
 Cypress.Commands.add('getAuthToken', () => {
-  const token = Cypress.env('authToken');
+  const token = Cypress.env('authToken') as string;
   return cy.wrap(token);
 });
 

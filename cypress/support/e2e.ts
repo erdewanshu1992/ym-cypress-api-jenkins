@@ -27,7 +27,7 @@ afterEach(() => {
 });
 
 // Fail fast on uncaught exceptions (optional - can be configured)
-Cypress.on('uncaught:exception', (err, runnable) => {
+Cypress.on('uncaught:exception', (err) => {
   // Return false to prevent Cypress from failing the test
   // You can add custom logic here to handle specific exceptions
   cy.log(`⚠️ Uncaught Exception: ${err.message}`);
