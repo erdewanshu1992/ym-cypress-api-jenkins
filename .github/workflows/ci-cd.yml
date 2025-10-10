@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x]
 
     steps:
     - name: Checkout code
@@ -44,7 +44,6 @@ jobs:
         browser: chrome
         headed: false
         spec: cypress/e2e/**/*.cy.ts
-        timeout: 600000
       env:
         NODE_ENV: test
         CI: true
@@ -87,7 +86,6 @@ jobs:
         browser: chrome
         headed: false
         spec: cypress/e2e/api/**/*.cy.ts
-        timeout: 900000
       env:
         NODE_ENV: test
         CI: true
