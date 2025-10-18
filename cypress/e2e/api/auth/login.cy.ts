@@ -99,7 +99,7 @@ describe('Authentication API - Login', () => {
         ]);
 
         // Validate specific values
-        ResponseValidator.validateBodyProperty(responseBody, 'status_code', 500); //401
+        ResponseValidator.validateBodyProperty(responseBody, 'status_code', 401); //401//500
         ResponseValidator.validateBodyProperty(responseBody, 'status', 'success');
         ResponseValidator.validateBodyProperty(
           responseBody,

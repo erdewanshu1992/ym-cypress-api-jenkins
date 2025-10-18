@@ -1,6 +1,9 @@
 import { defineConfig } from 'cypress';
-// Import with type assertion to avoid TypeScript issues
-import cypressOnRun from 'cypress-mochawesome-reporter/plugin.js';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+// Import with createRequire to handle CommonJS plugin in ES module
+const cypressOnRun = require('cypress-mochawesome-reporter/plugin');
 
 export default defineConfig({
   e2e: {

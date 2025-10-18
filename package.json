@@ -13,11 +13,15 @@
     "cypress:run": "cypress run",
     "test:api": "cypress run --spec 'cypress/e2e/api/**/*.cy.ts'",
     "test:auth": "cypress run --spec 'cypress/e2e/api/auth/**/*.cy.ts'",
-    "test:all": "cypress run"
+    "test:all": "cypress run",
+    "test:unit": "cypress run --spec 'cypress/e2e/**/*.cy.ts' --grep 'unit'",
+    "test:integration:ci": "cypress run --spec 'cypress/e2e/integration/hubspot-netsuite-ci-tests.cy.ts'",
+    "test:integration:daily": "cypress run --spec 'cypress/e2e/integration/hubspot-netsuite-daily-test.cy.ts'",
+    "test:performance": "cypress run --spec 'cypress/e2e/integration/hubspot-netsuite-ci-tests.cy.ts' --reporter mochawesome",
+    "test:cleanup": "node scripts/cleanup-test-data.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
-    "cypress": "^13.15.0",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -29,6 +33,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.18",
+    "cypress": "^12.17.4",
     "cypress-mochawesome-reporter": "^4.0.2",
     "eslint": "^9.9.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
